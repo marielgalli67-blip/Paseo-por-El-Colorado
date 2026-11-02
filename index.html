@@ -8,7 +8,7 @@
 
 :root{--sky:#00A3FF;--sun:#FFC700;--ok:#00E676;--ink:#0b2a4a;--card:rgba(255,255,255,.85)}
 *{box-sizing:border-box}
-html,body{margin:0;height:100%;overflow:hidden;background:#8fdcff;font-family:Nunito,'Trebuchet MS',sans-serif;font-weight:800;color:var(--ink)}
+html,body{margin:0;height:100%;overflow:hidden;background:linear-gradient(#7fd3ff 0 58%,#8fd36a 58%);font-family:Nunito,'Trebuchet MS',sans-serif;font-weight:800;color:var(--ink)}
 canvas{position:fixed;inset:0;width:100%;height:100%}
 #per{z-index:2;object-fit:cover;transform:scaleX(-1);pointer-events:none}
 #per.mini{inset:auto 1.5vw 1.5vh auto;width:26vw;height:14.6vw;border-radius:2vw;border:.4vw solid #fff;box-shadow:0 .4vw 1.2vw rgba(0,0,0,.35)}
@@ -195,7 +195,7 @@ const PL=[
  e:'En los años 50 no había luz: la solidaridad y la acción comunitaria llevaron la energía al pueblo.'}];
 const END=PL[4].d+30,LW=2.2;
 /* ---------- escena ---------- */
-const RN=new THREE.WebGLRenderer({canvas:$('gl'),antialias:true});RN.setPixelRatio(1);
+let RN=null;const gl=()=>{if(!RN){RN=new THREE.WebGLRenderer({canvas:$('gl'),antialias:false,powerPreference:'low-power'});RN.setPixelRatio(.7)}};
 const S=new THREE.Scene();S.background=new THREE.Color(0x7fd3ff);S.fog=new THREE.Fog(0x9be0ff,45,190);
 const C=new THREE.PerspectiveCamera(62,1,.1,300);
 S.add(new THREE.HemisphereLight(0xffffff,0x88aa66,1));const sun=new THREE.DirectionalLight(0xfff2c0,.8);sun.position.set(-30,50,20);S.add(sun);
@@ -212,14 +212,14 @@ rdM.material.map.repeat.set(1,(END+260)/6);
 [-1,1].forEach(s=>{const m=new THREE.Mesh(new THREE.PlaneGeometry(1.8,END+260),mat(0xe3dcc8));m.rotation.x=-Math.PI/2;m.position.set(s*4.5,.01,-END/2+60);S.add(m)});
 const sky=new THREE.Group();S.add(sky);
 const sn=new THREE.Mesh(new THREE.SphereGeometry(9,24,16),new THREE.MeshBasicMaterial({color:0xffc700,fog:false}));sn.position.set(-60,70,-170);sky.add(sn);
-for(let i=0;i<14;i++){const g=new THREE.Group();for(let j=0;j<4;j++){const m=new THREE.Mesh(new THREE.SphereGeometry(R(4,8),10,8),new THREE.MeshBasicMaterial({color:0xffffff,fog:false}));m.position.set(j*6,R(0,2),R(-2,2));m.scale.y=.6;g.add(m)}g.position.set(R(-150,150),R(45,75),-R(60,200));sky.add(g)}
+for(let i=0;i<8;i++){const g=new THREE.Group();for(let j=0;j<3;j++){const m=new THREE.Mesh(new THREE.SphereGeometry(R(4,8),10,8),new THREE.MeshBasicMaterial({color:0xffffff,fog:false}));m.position.set(j*6,R(0,2),R(-2,2));m.scale.y=.6;g.add(m)}g.position.set(R(-150,150),R(45,75),-R(60,200));sky.add(g)}
 const near=z=>PL.some(p=>Math.abs(z+p.d)<17);
-for(let d=-30;d<END+120;d+=R(8,13)){[-1,1].forEach(s=>{if(near(-d))return;const x=s*R(8,15),g=new THREE.Group();g.position.set(x,0,-d);
- cy(g,.25,.35,2.6,0x7a4b2a,0,1.3,0,6);const f=new THREE.Mesh(new THREE.SphereGeometry(R(1.4,2.2),10,8),mat([0x2fb34a,0x39c455,0x1f9d55][Math.floor(R(0,3))]));f.position.y=3.6;g.add(f);S.add(g)})}
+for(let d=-30;d<END+120;d+=R(14,20)){[-1,1].forEach(s=>{if(near(-d))return;const x=s*R(8,15),g=new THREE.Group();g.position.set(x,0,-d);
+ cy(g,.25,.35,2.6,0x7a4b2a,0,1.3,0,6);const f=new THREE.Mesh(new THREE.SphereGeometry(R(1.4,2.2),8,6),mat([0x2fb34a,0x39c455,0x1f9d55][Math.floor(R(0,3))]));f.position.y=3.6;g.add(f);S.add(g)})}
 const HC=[0xffd6e0,0xfff3b0,0xbdeaff,0xc9f5d0,0xffd0a6,0xe3d0ff];
-for(let d=0;d<END+120;d+=R(16,22)){[-1,1].forEach(s=>{if(near(-d)||Math.random()<.25)return;const g=new THREE.Group();g.position.set(s*R(12,17),0,-d);g.rotation.y=-s*Math.PI/2;
+for(let d=0;d<END+120;d+=R(24,32)){[-1,1].forEach(s=>{if(near(-d)||Math.random()<.25)return;const g=new THREE.Group();g.position.set(s*R(12,17),0,-d);g.rotation.y=-s*Math.PI/2;
  bx(g,6,3.4,5,HC[Math.floor(R(0,6))],0,1.7,0);const r=new THREE.Mesh(new THREE.ConeGeometry(4.6,1.8,4),mat(0xd2553c));r.rotation.y=Math.PI/4;r.position.y=4.3;g.add(r);bx(g,1,1.8,.1,0x7a4b2a,0,.9,2.55);S.add(g)})}
-for(let d=0;d<END+120;d+=22){[-1,1].forEach(s=>{const g=new THREE.Group();g.position.set(s*5.6,0,-d);cy(g,.08,.1,4.2,0x555d66,0,2.1,0,6);bx(g,.9,.18,.3,0xfff1a8,-s*.4,4.2,0);S.add(g)})}
+for(let d=0;d<END+120;d+=34){[-1,1].forEach(s=>{const g=new THREE.Group();g.position.set(s*5.6,0,-d);cy(g,.08,.1,4.2,0x555d66,0,2.1,0,6);bx(g,.9,.18,.3,0xfff1a8,-s*.4,4.2,0);S.add(g)})}
 /* carteles */
 function sign(n,txt){const c=document.createElement('canvas');c.width=1024;c.height=256;const x=c.getContext('2d');
  const g=x.createLinearGradient(0,0,1024,0);['#ff5fa2','#ffc700','#00e676','#00a3ff','#b36bff'].forEach((k,i)=>g.addColorStop(i/4,k));
@@ -233,7 +233,7 @@ function brk(rx,ry){const k=rx+','+ry;if(bkC[k])return bkC[k];const c=document.c
  for(let r=0;r<8;r++)for(let i=-1;i<4;i++){x.fillStyle=`hsl(${12+R(0,8)},${50+R(0,10)}%,${42+R(0,10)}%)`;x.fillRect(i*32+(r%2?16:0)+1,r*16+1,30,14)}
  const t=new THREE.CanvasTexture(c);t.wrapS=t.wrapT=THREE.RepeatWrapping;t.repeat.set(rx,ry);return bkC[k]=new THREE.MeshLambertMaterial({map:t})}
 const bm=(g,w,h,d,rx,ry,x,y,z)=>{const m=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),brk(rx,ry));m.position.set(x,y,z);g.add(m);return m};
-const ball=(g,r,c,x,y,z,sx=1,sy=1,sz=1)=>{const m=new THREE.Mesh(new THREE.SphereGeometry(r,10,8),mat(c));m.position.set(x,y,z);m.scale.set(sx,sy,sz);g.add(m);return m};
+const ball=(g,r,c,x,y,z,sx=1,sy=1,sz=1)=>{const m=new THREE.Mesh(new THREE.SphereGeometry(r,8,6),mat(c));m.position.set(x,y,z);m.scale.set(sx,sy,sz);g.add(m);return m};
 function gab(g,span,len,h,c,x,y,z,rot=1){const s=new THREE.Shape();s.moveTo(-span/2,0);s.lineTo(span/2,0);s.lineTo(0,h);const m=new THREE.Mesh(new THREE.ExtrudeGeometry(s,{depth:len,bevelEnabled:false}),mat(c));m.geometry.translate(0,0,-len/2);if(rot)m.rotation.y=Math.PI/2;m.position.set(x,y,z);g.add(m);return m}
 function tp(txt,w,h,fg,bg,fs=90){const c=document.createElement('canvas');c.width=512;c.height=Math.round(512*h/w);const x=c.getContext('2d');if(bg){x.fillStyle=bg;x.fillRect(0,0,c.width,c.height)}
  x.fillStyle=fg;x.font='600 '+fs+'px Fredoka';x.textAlign='center';x.textBaseline='middle';while(x.measureText(txt).width>c.width-20)x.font='600 '+(fs-=4)+'px Fredoka';x.fillText(txt,c.width/2,c.height/2+3);
@@ -283,6 +283,14 @@ g=>{bx(g,10,3.4,6,0xf1ece0,-10,1.7,0);const v=new THREE.Mesh(new THREE.CylinderG
  pm(g,8.2,2.6,1.6,9);cy(g,.06,.06,6,0xdddddd,6,3,3.6,5);bx(g,1.1,.3,.04,0x8ecbf2,6.6,5.7,3.6);bx(g,1.1,.3,.04,0xffffff,6.6,5.4,3.6);bx(g,1.1,.3,.04,0x8ecbf2,6.6,5.1,3.6);cy(g,.12,.15,7.5,0x6b5a45,-3.2,3.7,5.3,6);bx(g,1.8,.1,.1,0x6b5a45,-3.2,6.8,5.3)}];
 PL.forEach((p,i)=>{p.o=[12,8.5,12.5,11.5,13.5][i];p.dz=i==4?-10:0;const g=new THREE.Group();B[i](g);g.position.set(p.s*p.o,0,-p.d+p.dz);g.rotation.y=-p.s*Math.PI/2;S.add(g);p.g=g;
  const sp=sign(i+1,p.n);sp.position.set(p.s*p.o,[7.5,10.5,9,8.5,11.5][i],-p.d+p.dz+2);S.add(sp)});
+/* fusionar la geometría estática: pocas llamadas de dibujo = mucho más liviano */
+function bake(){S.updateMatrixWorld(true);const mp=new Map(),dead=[];
+ S.traverse(o=>{if(!o.isMesh||!o.material.isMeshLambertMaterial)return;let a=mp.get(o.material);if(!a)mp.set(o.material,a=[]);const g=o.geometry.index?o.geometry.toNonIndexed():o.geometry.clone();g.applyMatrix4(o.matrixWorld);a.push(g);dead.push(o)});
+ dead.forEach(o=>o.parent.remove(o));
+ mp.forEach((a,m)=>{const n=a.reduce((t,g)=>t+g.attributes.position.count,0),P=new Float32Array(n*3),N=new Float32Array(n*3),U=new Float32Array(n*2);let k=0;
+  a.forEach(g=>{P.set(g.attributes.position.array,k*3);N.set(g.attributes.normal.array,k*3);U.set(g.attributes.uv.array,k*2);k+=g.attributes.position.count;g.dispose()});
+  const bg=new THREE.BufferGeometry();bg.setAttribute('position',new THREE.BufferAttribute(P,3));bg.setAttribute('normal',new THREE.BufferAttribute(N,3));bg.setAttribute('uv',new THREE.BufferAttribute(U,2));S.add(new THREE.Mesh(bg,m))})}
+bake();
 /* estrellas */
 const sh=new THREE.Shape();for(let i=0;i<10;i++){const r=i%2?.38:.9,a=i*Math.PI/5+Math.PI/2;i?sh.lineTo(Math.cos(a)*r,Math.sin(a)*r):sh.moveTo(Math.cos(a)*r,Math.sin(a)*r)}
 const stG=new THREE.ExtrudeGeometry(sh,{depth:.25,bevelEnabled:false});stG.translate(0,0,-.125);const stM=new THREE.MeshBasicMaterial({color:0xFFC700});
@@ -290,7 +298,7 @@ let stars=[],pops=[];
 function mkStars(){stars.forEach(s=>S.remove(s.m));stars=[];for(let d=28;d<END-20;d+=R(9,13)){if(PL.some(p=>Math.abs(d-(p.d-11))<14))continue;const L=Math.floor(R(-1,2));[L,Math.random()<.2?-L||1:null].forEach(l=>{if(l===null)return;const m=new THREE.Mesh(stG,stM);m.position.set(l*LW,1.9,-d);m.scale.setScalar(.75);S.add(m);stars.push({m,l,d,got:false})})}}
 /* ---------- estado ---------- */
 const G={mode:'start'},P={ok:false,full:false,stepAt:-1e5,lane:0,hl:false,hr:false,ss:0},K={on:false,walk:false,lane:0,laneSet:false,hl:false,hr:false};
-let LITE=false,C0=null,acc=null,look=new THREE.Vector3(0,1.8,-20),kbOnly=false,pose=null,run=false,last=performance.now(),idleT=0;
+let lr=0,LITE=false,C0=null,acc=null,look=new THREE.Vector3(0,1.8,-20),kbOnly=false,pose=null,run=false,last=performance.now(),idleT=0;
 const eC=$('eC'),eL=$('eL'),eR=$('eR'),eT=$('eT'),hint=$('hint');
 function reset(){Object.assign(G,{dist:0,speed:0,score:0,steps:0,moveT:0,next:0,lane:0,camX:0,right:0,cal:0,ph:'',hl:0,hr:0,ha:0,calm:0,pt:0,armed:false,sa:0});look.set(0,1.8,-20);mkStars();[eL,eR,eT].forEach(e=>e.className='card');
  $('hud').classList.add('on');
@@ -301,22 +309,22 @@ let tt=0;const toast=t=>{const e=$('toast');e.textContent=t;e.style.opacity=1;cl
 const logo=`<svg width="9vw" height="9vw" viewBox="0 0 100 100"><path d="M50 94C28 66 18 52 18 38a32 32 0 0 1 64 0c0 14-10 28-32 56z" fill="#00A3FF" stroke="#fff" stroke-width="6" stroke-linejoin="round"/><circle cx="38" cy="36" r="6" fill="#fff"/><circle cx="62" cy="36" r="6" fill="#fff"/><circle cx="39" cy="37" r="3" fill="#0b2a4a"/><circle cx="63" cy="37" r="3" fill="#0b2a4a"/><path d="M36 50q14 14 28 0" stroke="#FFC700" stroke-width="5" fill="none" stroke-linecap="round"/></svg>`;
 function home(){G.mode='start';eC.className='card show';eC.innerHTML=`${logo}<h1>¡Caminá El Colorado!</h1><p>Un recorrido de realidad mixta por 5 lugares de “La Perla del Sur”. ¡Vos sos el protagonista!</p>
 <div class="how"><div><b>🚶</b>Caminá en el lugar para avanzar</div><div><b>↔</b>Un paso al costado cambia de carril</div><div><b>✋</b>Mano arriba: agarrás estrellas y elegís respuesta</div></div>
-<button class="btn" id="bC">▶ Empezar con la cámara</button><button class="btn s" id="bL">Modo liviano (cámara en ventanita)</button><button class="btn s" id="bK">Probar con el teclado</button>
+<button class="btn" id="bC">▶ Empezar con la cámara</button><button class="btn s" id="bL">Sin recorte (más liviano)</button><button class="btn s" id="bK">Probar con el teclado</button>
 <p class="small">🔒 Todo se procesa en esta computadora. No se guarda ni se envía ninguna imagen.<br>Teclado: ← ↑ → mover · A / B responder · Enter seguir</p>`;
  $('bC').onclick=()=>startCam(false);$('bL').onclick=()=>startCam(true);$('bK').onclick=()=>{kbOnly=true;K.on=true;begin()}}
 async function startCam(lite){LITE=!!lite;eC.innerHTML='<h2>Preparando la cámara…</h2><p>Aceptá el permiso de la cámara. Cargando el motor de visión (puede tardar unos segundos).</p>';
- try{const st=await navigator.mediaDevices.getUserMedia({video:{width:{ideal:1280},height:{ideal:720},facingMode:'user'},audio:false});const v=$('cam');v.srcObject=st;await v.play();
+ try{const st=await navigator.mediaDevices.getUserMedia({video:{width:{ideal:640},height:{ideal:360},facingMode:'user'},audio:false});const v=$('cam');v.srcObject=st;await v.play();
   G.loading=true;const U={},ks=Object.keys(ASSETS);let n=0;for(const k of ks){const a=ASSETS[k];eC.querySelector('p').textContent=`Cargando el motor de visión… ${++n} de ${ks.length}. En computadoras lentas puede tardar; si Chrome pregunta, tocá “Esperar”.`;await new Promise(r=>setTimeout(r,40));U[k]=URL.createObjectURL(await (await fetch(`data:${a.t};base64,${a.b}`)).blob());a.b=''}
   eC.querySelector('p').textContent='Iniciando el motor de visión… puede tardar hasta un minuto. Si Chrome avisa “La página no responde”, tocá Esperar.';await new Promise(r=>setTimeout(r,80));
-  pose=new Pose({locateFile:f=>U[f]||f});pose.setOptions({modelComplexity:0,smoothLandmarks:true,useCpuInference:true,enableSegmentation:!LITE,smoothSegmentation:!LITE,minDetectionConfidence:.5,minTrackingConfidence:.5});
-  pose.onResults(onRes);await pose.initialize();G.loading=false;per.classList.toggle('mini',LITE);run=true;(async()=>{while(run){if(v.readyState>=2)await pose.send({image:v});else await new Promise(r=>setTimeout(r,30))}})();begin()
+  pose=new Pose({locateFile:f=>U[f]||f});pose.setOptions({modelComplexity:0,smoothLandmarks:true,useCpuInference:true,enableSegmentation:!LITE,smoothSegmentation:false,minDetectionConfidence:.5,minTrackingConfidence:.5});
+  pose.onResults(onRes);await pose.initialize();G.loading=false;per.classList.toggle('mini',LITE);run=true;(async()=>{while(run){await new Promise(r=>v.requestVideoFrameCallback?v.requestVideoFrameCallback(()=>r()):setTimeout(r,33));try{await pose.send({image:v})}catch(e){await new Promise(r=>setTimeout(r,200))}}})();begin()
  }catch(e){G.loading=false;eC.innerHTML=`<h2>No pudimos usar la cámara</h2><p>Revisá que Chrome tenga permiso para usarla y que ninguna otra app la esté usando.</p><p class="small">${e.message||e}</p><button class="btn" id="bR">Reintentar</button><button class="btn s" id="bK2">Jugar con el teclado</button>`;$('bR').onclick=()=>startCam(LITE);$('bK2').onclick=()=>{kbOnly=true;K.on=true;begin()}}}
-function begin(){reset();if(kbOnly){C0={hx:.5,tH:.3};play()}else{G.mode='calib';C0=null;acc={n:0,hx:0,tH:0};eC.className='card show';eC.innerHTML='<h2>Calibración</h2><p>Pará de cuerpo entero, a unos 2 metros de la cámara. Que se vean tu cabeza y tus pies. Quedate quieto.</p><h1 class="count" id="cn">…</h1>'}}
+function begin(){gl();reset();if(kbOnly){C0={hx:.5,tH:.3};play()}else{G.mode='calib';C0=null;acc={n:0,hx:0,tH:0};eC.className='card show';eC.innerHTML='<h2>Calibración</h2><p>Pará de cuerpo entero, a unos 2 metros de la cámara. Que se vean tu cabeza y tus pies. Quedate quieto.</p><h1 class="count" id="cn">…</h1>'}}
 function play(){G.mode='play';eC.className='card';hint.textContent=''}
 /* ---------- MediaPipe ---------- */
 const per=$('per'),pc=per.getContext('2d');
 function onRes(r){const w=r.image.width,h=r.image.height;if(per.width!==w){per.width=w;per.height=h}pc.clearRect(0,0,w,h);
- if(LITE){pc.drawImage(r.image,0,0,w,h)}else if(r.segmentationMask){pc.save();pc.filter='blur(1.5px)';pc.drawImage(r.segmentationMask,0,0,w,h);pc.filter='none';pc.globalCompositeOperation='source-in';pc.drawImage(r.image,0,0,w,h);pc.restore()}
+ if(LITE){pc.drawImage(r.image,0,0,w,h)}else if(r.segmentationMask){pc.save();pc.drawImage(r.segmentationMask,0,0,w,h);pc.globalCompositeOperation='source-in';pc.drawImage(r.image,0,0,w,h);pc.restore()}
  const l=r.poseLandmarks;P.ok=P.full=false;if(!l)return;const v=(i,t)=>l[i].visibility>t;
  P.ok=[0,23,24,25,26].every(i=>v(i,.4));P.full=[0,11,12,23,24,27,28].every(i=>v(i,.5));
  const hx=(l[23].x+l[24].x)/2,tH=Math.abs((l[23].y+l[24].y)/2-(l[11].y+l[12].y)/2);
@@ -365,7 +373,7 @@ function cam(dt,paused,bob){const p=PL[Math.min(G.next,4)];G.camX+=(G.lane*LW-G.
  const t=paused?new V(p.s*p.o,G.next==1?4.5:3.2,-p.d+p.dz):new V(G.camX*.4,1.9,-G.dist-18);look.lerp(t,Math.min(1,dt*2.5));
  C.position.set(G.camX,2.3+bob,-G.dist);C.lookAt(look)}
 function loop(now){requestAnimationFrame(loop);const dt=Math.min(.05,(now-last)/1000);last=now;const s=sens();let bob=0,paused=false;
- const w=innerWidth,h=innerHeight;if(RN.domElement.width!==Math.floor(w*RN.getPixelRatio())){RN.setSize(w,h,false);C.aspect=w/h;C.updateProjectionMatrix()}
+ const w=innerWidth,h=innerHeight;if(RN&&RN.domElement.width!==Math.floor(w*RN.getPixelRatio())){RN.setSize(w,h,false);C.aspect=w/h;C.updateProjectionMatrix()}
  if(G.mode==='start'){idleT+=dt;G.dist=(idleT*4)%60;G.camX=0;G.lane=0;G.next=0;look.set(0,1.9,-G.dist-18);C.position.set(0,2.3,-G.dist);C.lookAt(look)}
  else{
   if(G.mode==='calib'){if(!acc)return;const c=$('cn');if(P.full){G.cal+=dt}else{G.cal=0;acc.n=0;acc.hx=acc.tH=0}
@@ -387,7 +395,7 @@ function loop(now){requestAnimationFrame(loop);const dt=Math.min(.05,(now-last)/
  stars.forEach(st=>{if(!st.got)st.m.rotation.y+=dt*2.2});
  for(let i=pops.length-1;i>=0;i--){const o=pops[i];o.t+=dt;o.m.scale.setScalar(.75+o.t*4);o.m.position.y+=dt*4;if(o.t>.4){S.remove(o.m);pops.splice(i,1)}}
  PL.forEach(p=>{if(p.g.userData.spin)p.g.userData.spin.rotation.y+=dt*.6});
- sky.position.z=C.position.z;if(!G.loading)RN.render(S,C)}
+ sky.position.z=C.position.z;if(RN&&now-lr>=(pose?36:16)){RN.render(S,C);lr=now}}
 reset();G.mode='start';$('hud').classList.remove('on');home();requestAnimationFrame(loop);
 });
 </script></body></html>
